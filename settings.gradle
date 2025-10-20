@@ -1,1 +1,2 @@
 rootProject.name = 'zuora_api'
+include 'zuora-common', 'zuora-launcher', 'zuora-interface', 'zuora-application', 'zuora-domain', 'zuora-infrastructure'

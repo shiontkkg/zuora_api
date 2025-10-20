@@ -1,0 +1,15 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+}
+
+dependencies {
+    implementation project(':zuora-common')
+    implementation project(':zuora-application')
+    implementation project(':zuora-domain')
+    implementation 'org.springframework.retry:spring-retry'
+
+    implementation 'com.zuora.sdk:zuora-sdk-java:3.11.0'
+    compileOnly 'org.projectlombok:lombok'
+}

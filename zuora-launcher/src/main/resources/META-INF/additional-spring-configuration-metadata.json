@@ -1,0 +1,32 @@
+{"properties": [
+  {
+    "name": "zuora.sdk-client.client-id",
+    "type": "java.lang.String",
+    "description": "ZuoraのOAuthクライアントのID。"
+  },
+  {
+    "name": "zuora.sdk-client.client-secret",
+    "type": "java.lang.String",
+    "description": "ZuoraのOAuthクライアントのシークレット。"
+  },
+  {
+    "name": "zuora.sdk-client.zuora-base-url",
+    "type": "java.lang.String",
+    "description": "ZuoraのAPIベースURL。デフォルトは https://rest.apisandbox.zuora.com です。"
+  },
+  {
+    "name": "zuora.sdk-client.read-timeout",
+    "type": "java.lang.int",
+    "description": "Zuoraクライアントの読み取りタイムアウト。"
+  },
+  {
+    "name": "zuora.sdk-client.write-timeout",
+    "type": "java.lang.int",
+    "description": "Zuoraクライアントの書き込みタイムアウト。"
+  },
+  {
+    "name": "zuora.sdk-client.connect-timeout",
+    "type": "java.lang.int",
+    "description": "Zuoraクライアントの接続タイムアウト。"
+  }
+]}

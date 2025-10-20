@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+}
+
+dependencies {
+    implementation project(':zuora-interface')
+    implementation project(':zuora-infrastructure') // 他のサブプロジェクトが依存していないので必要
+
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // dotenv
+    implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+}

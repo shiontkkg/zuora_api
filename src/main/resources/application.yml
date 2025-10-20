@@ -1,7 +1,0 @@
-spring:
-  application:
-    name: zuora_api
-zuora:
-  sdk-client:
-    client-id: ${ZUORA_CLIENT_ID:aaa}
-    client-secret: ${ZUORA_CLIENT_SECRET:bbb}

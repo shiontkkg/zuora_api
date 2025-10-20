@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: zuora_api
+  jackson:
+    time-zone: Asia/Tokyo
+zuora:
+  sdk-client:
+    client-id: ${ZUORA_CLIENT_ID:aaa}
+    client-secret: ${ZUORA_CLIENT_SECRET:bbb}
+    zuora-base-url: ${ZUORA_BASE_URL:https://rest.apisandbox.zuora.com}
+    connect-timeout: 10
+    write-timeout: 60
+    read-timeout: 125
