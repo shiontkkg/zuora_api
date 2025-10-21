@@ -19,12 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class ZuoraProductApi implements ProductApi {
   
-  private static final Set<String> PRODUCT_EXCLUSION_LIST = Set.of(
-      "f9773ee0a58f63cb1fbe080094e76fad", // Cloud Storage - Personal
-      "f9773ee026d8f81dca6d9791966178b4", // Cloud Storage - Standard
-      "f9773ee0a72d26c62132e2734796b88f", // Cloud Storage Integration Services
-      "f9773ee0507080ce75b788bf6cf2065e", // Cloud Storage API Access
-      "8ad097b4917efc77019184c423e76f9c" // サンプルサプライ用品
+  private static final Set<String> AVAILABLE_PRODUCT_LIST = Set.of(
+      "8ad081dd917ed47501918819c3fe28c3", // サンプルプロダクト1
+      "9d559971c0114e2aa548c4ecfb0da65d" // サンプルプロダクト2
       );
 
   private final ZuoraClient zuoraClient;
@@ -39,7 +36,7 @@ public class ZuoraProductApi implements ProductApi {
       var products = zuoraClient.productsApi().getProductsApi().execute();
 
       for (var product : products.getProducts()) {
-        if (PRODUCT_EXCLUSION_LIST.contains(product.getId())) {
+        if (!AVAILABLE_PRODUCT_LIST.contains(product.getId())) {
           continue;
         }
 
