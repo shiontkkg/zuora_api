@@ -15,6 +15,7 @@ import com.zuora.model.CreateOrderSubscription;
 import com.zuora.model.InitialTerm;
 import com.zuora.model.OrderActionCreateSubscriptionTerms;
 import com.zuora.model.OrderActionType;
+import com.zuora.model.PriceChangeOption;
 import com.zuora.model.ProcessingOptionsWithDelayedCapturePayment;
 import com.zuora.model.RecurringFlatFeePricingOverride;
 import com.zuora.model.RenewalSetting;
@@ -49,18 +50,19 @@ public class CreateOrderRequestBuilder {
     var ratePlanOverride =
         new CreateOrderRatePlanOverride()
             .productRatePlanId(domainRequest.getProductRatePlanDto().getId());
-    if (domainRequest.getDiscountOption().getDiscountType() == 2) {
+    if (domainRequest.getDiscountOption().getDiscountType() >= 2) {
+      var pricingOverride =
+          new RecurringFlatFeePricingOverride()
+               .priceChangeOption(PriceChangeOption.USELATESTPRODUCTCATALOGPRICING)
+              .listPrice(BigDecimal.valueOf(domainRequest.getDiscountOption().getPrice()));
+      if (domainRequest.getDiscountOption().getDiscountType() == 3) {
+        pricingOverride.setPriceChangeOption(PriceChangeOption.NOCHANGE);
+      }
       var chargeOverrides =
           List.of(
               new ChargeOverride()
                   .productRatePlanChargeId(domainRequest.getProductRatePlanDto().getChargeId())
-                  .pricing(
-                      new ChargeOverridePricing()
-                          .recurringFlatFee(
-                              new RecurringFlatFeePricingOverride()
-                                  .listPrice(
-                                      BigDecimal.valueOf(
-                                          domainRequest.getDiscountOption().getPrice())))));
+                  .pricing(new ChargeOverridePricing().recurringFlatFee(pricingOverride)));
       ratePlanOverride.setChargeOverrides(chargeOverrides);
     }
 

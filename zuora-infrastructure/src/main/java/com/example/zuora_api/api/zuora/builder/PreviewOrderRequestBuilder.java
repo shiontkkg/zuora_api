@@ -50,7 +50,7 @@ public class PreviewOrderRequestBuilder {
 
     // createSubscription > subscribeToRatePlans
     var ratePlanOverride = new PreviewOrderRatePlanOverride().productRatePlanId(domainRequest.getProductRatePlanDto().getId());
-    if (domainRequest.getDiscountOption().getDiscountType() == 2) {
+    if (domainRequest.getDiscountOption().getDiscountType() >= 2) {
       var chargeOverrides =
           List.of(
               new PreviewOrderChargeOverride()

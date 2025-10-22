@@ -32,7 +32,7 @@ public class PreviewChangePlanOrderRequestBuilder {
     var newProductRatePlan =
         new CreateOrderChangePlanRatePlanOverride()
             .productRatePlanId(domainRequest.getProductRatePlanDto().getId());
-    if (domainRequest.getDiscountOption().getDiscountType() == 2) {
+    if (domainRequest.getDiscountOption().getDiscountType() >= 2) {
       var chargeOverrides =
           List.of(
               new ChargeOverride()

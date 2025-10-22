@@ -15,6 +15,7 @@ import com.zuora.model.CreateOrderChangePlanRatePlanOverride;
 import com.zuora.model.CreateOrderRequest;
 import com.zuora.model.CreateOrderSubscription;
 import com.zuora.model.OrderActionType;
+import com.zuora.model.PriceChangeOption;
 import com.zuora.model.ProcessingOptionsWithDelayedCapturePayment;
 import com.zuora.model.RecurringFlatFeePricingOverride;
 import com.zuora.model.TriggerDate;
@@ -48,21 +49,22 @@ public class CreateRenewSubscriptionOrderRequestBuiler {
         new CreateOrderAction().type(OrderActionType.RENEWSUBSCRIPTION).triggerDates(triggerDates);
 
     // subscriptions > orderActions > ChangePlan
-    if (domainRequest.getDiscountOption().getDiscountType() == 2) {
+    if (domainRequest.getDiscountOption().getDiscountType() >= 2) {
       var newProductRatePlan =
           new CreateOrderChangePlanRatePlanOverride()
               .productRatePlanId(domainRequest.getProductRatePlanDto().getId());
+      var pricingOverride =
+          new RecurringFlatFeePricingOverride()
+              .priceChangeOption(PriceChangeOption.USELATESTPRODUCTCATALOGPRICING)
+              .listPrice(BigDecimal.valueOf(domainRequest.getDiscountOption().getPrice()));
+      if (domainRequest.getDiscountOption().getDiscountType() == 3) {
+        pricingOverride.setPriceChangeOption(PriceChangeOption.NOCHANGE);
+      }
       var chargeOverrides =
           List.of(
               new ChargeOverride()
                   .productRatePlanChargeId(domainRequest.getProductRatePlanDto().getChargeId())
-                  .pricing(
-                      new ChargeOverridePricing()
-                          .recurringFlatFee(
-                              new RecurringFlatFeePricingOverride()
-                                  .listPrice(
-                                      BigDecimal.valueOf(
-                                          domainRequest.getDiscountOption().getPrice())))));
+                  .pricing(new ChargeOverridePricing().recurringFlatFee(pricingOverride)));
       newProductRatePlan.chargeOverrides(chargeOverrides);
       var changePlan =
           new CreateOrderChangePlan()

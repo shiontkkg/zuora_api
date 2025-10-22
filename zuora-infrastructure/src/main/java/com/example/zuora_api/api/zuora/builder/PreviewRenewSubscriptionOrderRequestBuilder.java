@@ -51,7 +51,7 @@ public class PreviewRenewSubscriptionOrderRequestBuilder {
             .triggerDates(triggerDates);
 
     // subscriptions > orderActions > ChangePlan
-    if (domainRequest.getDiscountOption().getDiscountType() == 2) {
+    if (domainRequest.getDiscountOption().getDiscountType() >= 2) {
       var newProductRatePlan =
           new CreateOrderChangePlanRatePlanOverride()
               .productRatePlanId(domainRequest.getProductRatePlanDto().getId());

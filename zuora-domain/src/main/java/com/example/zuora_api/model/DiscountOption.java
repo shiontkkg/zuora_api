@@ -6,8 +6,9 @@ import lombok.Getter;
 public class DiscountOption {
   
   /**
-   * 1: 値引きなし
-   * 2: 価格を変更する
+   * 1: 変更しない
+   * 2: 最初の期間のみ変更する
+   * 3: 永続的に変更する
    */
   private int discountType;
   
