@@ -1,5 +1,6 @@
 package com.example.zuora_api.api.zuora;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
@@ -8,9 +9,12 @@ import com.example.zuora_api.api.CreditMemoApi;
 import com.example.zuora_api.api.zuora.mapper.ZuoraCreditMemoMapper;
 import com.example.zuora_api.dto.CreditMemoDto;
 import com.example.zuora_api.exception.ExternalApiException;
+import com.example.zuora_api.model.CreateCreditMemoRequest;
 import com.zuora.ApiException;
 import com.zuora.ZuoraClient;
 import com.zuora.model.BillingDocumentStatus;
+import com.zuora.model.CreateCreditMemoFromInvoiceRequest;
+import com.zuora.model.CreditMemoItemFromInvoiceItem;
 import com.zuora.model.UnapplyCreditMemoRequest;
 import com.zuora.model.UnapplyCreditMemoToInvoice;
 import lombok.AllArgsConstructor;
@@ -22,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ZuoraCreditMemoApi implements CreditMemoApi {
 
   private final ZuoraClient zuoraClient;
-  
+
   private final ZuoraCreditMemoMapper creditMemoMapper;
 
   public List<CreditMemoDto> getCreditMemosByAccount(String accountKey) {
@@ -92,8 +96,8 @@ public class ZuoraCreditMemoApi implements CreditMemoApi {
         if (creditMemoPart.getInvoiceId() != null) {
           unapplyCreditMemoToInvoiceList.add(
               new UnapplyCreditMemoToInvoice()
-              .invoiceId(creditMemoPart.getInvoiceId())
-              .amount(creditMemoPart.getAmount()));
+                  .invoiceId(creditMemoPart.getInvoiceId())
+                  .amount(creditMemoPart.getAmount()));
         }
       }
 
@@ -125,9 +129,47 @@ public class ZuoraCreditMemoApi implements CreditMemoApi {
               クレジットメモの削除に失敗しました。%s
               """
               .formatted(e.getMessage()));
-      throw new ExternalApiException(e.getErrorObject().getReasons().get(0).getMessage(), e.getCode());
+      throw new ExternalApiException(
+          e.getErrorObject().getReasons().get(0).getMessage(), e.getCode());
     }
 
     return true;
+  }
+
+  public String createFromInvoice(CreateCreditMemoRequest domainRequest) {
+    
+    var createdCreditMemoNumber = "";
+
+    var items = new ArrayList<CreditMemoItemFromInvoiceItem>();
+    domainRequest
+        .getItems()
+        .forEach(
+            i -> {
+              items.add(
+                  new CreditMemoItemFromInvoiceItem()
+                      .amount(BigDecimal.valueOf(i.getAmount()))
+                      .invoiceItemId(i.getInvoiceItemId())
+                      .skuName(i.getSkuName()));
+            });
+
+    var request =
+        new CreateCreditMemoFromInvoiceRequest()
+            .invoiceId(domainRequest.getInvoiceId())
+            .effectiveDate(domainRequest.getEffectiveDate())
+            .autoApplyToInvoiceUponPosting(domainRequest.isAutoApplyToInvoiceUponPosting())
+            .autoPost(domainRequest.isAutoPost())
+            .items(items);
+
+    try {
+      var response = zuoraClient
+          .creditMemosApi()
+          .createCreditMemoFromInvoiceApi(domainRequest.getInvoiceNumber(), request).execute();
+      createdCreditMemoNumber = response.getNumber();
+      
+    } catch (ApiException e) {
+      e.printStackTrace();
+    }
+
+    return createdCreditMemoNumber;
   }
 }
