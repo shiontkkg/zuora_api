@@ -103,7 +103,7 @@ public class GetCreditMemoDetailSample {
 
     /*
      * 確認対象のクレジットメモの要素（part）を取得する。
-     * 
+     *
      * List all parts of credit memo
      * https://developer.zuora.com/v1-api-reference/api/operation/GET_CreditMemoParts/
      */
@@ -117,7 +117,7 @@ public class GetCreditMemoDetailSample {
 
       /*
        * 適用先の請求書とその項目および税項目を取得する。
-       * 
+       *
        * Object Queries: List invoice items
        * https://developer.zuora.com/v1-api-reference/api/operation/queryInvoiceItems/
        */
@@ -128,6 +128,21 @@ public class GetCreditMemoDetailSample {
               .filter(List.of("invoiceid.EQ:" + creditMemoPart.getInvoiceId()))
               .expand(List.of("invoice", "taxationitems"))
               .execute();
+
+      /*
+       * 未充当分もCredit Memo Partとして存在する模様。
+       */
+      if (invoiceItemsResponse.getData().isEmpty()) {
+        var creditMemoPartDto =
+            new CreditMemoPartDto(
+                creditMemoPart.getId(),
+                "未適用",
+                creditMemoPart.getAmount().intValue(),
+                new ArrayList<InvoiceItemDto>());
+        System.out.println(creditMemoPartDto);
+        continue;
+      }
+
       var invoiceNumber = invoiceItemsResponse.getData().get(0).getInvoice().getInvoiceNumber();
 
       /*
@@ -155,7 +170,7 @@ public class GetCreditMemoDetailSample {
                     taxationItem.getBalance().intValue(),
                     new ArrayList<CreditMemoItemPartDto>()));
       }
-      
+
       /*
        * クレジットメモ項目の要素（item part）を取得し、適用先の請求項目情報に紐づける。
        */
@@ -163,7 +178,7 @@ public class GetCreditMemoDetailSample {
       /*
        * クレジットメモ項目の要素を取得する。
        * 他の項目と異なり、本体と税が分かれていない。
-       * 
+       *
        * List all credit memo part items
        * ※API Referenceに載っていない。
        *
@@ -179,7 +194,7 @@ public class GetCreditMemoDetailSample {
               .creditMemosApi()
               .getCreditMemoItemPartsApi(creditMemoPart.getId(), creditMemoNumber)
               .execute();
-      
+
       for (var creditMemoItemPart : creditMemoItemParts.getItemParts()) {
         CreditMemoItemPartDto creditMemoItemPartDto = null;
 
