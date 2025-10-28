@@ -198,20 +198,47 @@ public class GetCreditMemoDetailSample {
       for (var creditMemoItemPart : creditMemoItemParts.getItemParts()) {
         CreditMemoItemPartDto creditMemoItemPartDto = null;
 
+        /*
+         * from: creditMemoItemId or creditTaxItemId
+         */
         if (creditMemoItemPart.getCreditMemoItemId() != null) {
-          creditMemoItemPartDto =
-              new CreditMemoItemPartDto(
-                  creditMemoItemPart.getId(),
-                  creditMemoItemIdToNameMap.get(creditMemoItemPart.getCreditMemoItemId()),
-                  creditMemoItemPart.getAmount().intValue(),
-                  0);
+          var fromName = creditMemoItemPart.getCreditMemoItemId();
+          /*
+           * to: invoiceItemId or taxItemId
+           */
+          if (creditMemoItemPart.getInvoiceItemId() != null) {
+            creditMemoItemPartDto =
+                new CreditMemoItemPartDto(
+                    creditMemoItemPart.getId(),
+                    creditMemoItemIdToNameMap.get(fromName),
+                    creditMemoItemPart.getAmount().intValue(),
+                    0);
+          } else {
+            creditMemoItemPartDto =
+                new CreditMemoItemPartDto(
+                    creditMemoItemPart.getId(),
+                    creditMemoItemIdToNameMap.get(fromName),
+                    0,
+                    creditMemoItemPart.getAmount().intValue());
+          }
+
         } else {
-          creditMemoItemPartDto =
-              new CreditMemoItemPartDto(
-                  creditMemoItemPart.getId(),
-                  creditMemoItemIdToNameMap.get(creditMemoItemPart.getCreditTaxItemId()),
-                  0,
-                  creditMemoItemPart.getAmount().intValue());
+          var fromName = creditMemoItemPart.getCreditTaxItemId();
+          if (creditMemoItemPart.getInvoiceItemId() != null) {
+            creditMemoItemPartDto =
+                new CreditMemoItemPartDto(
+                    creditMemoItemPart.getId(),
+                    creditMemoItemIdToNameMap.get(fromName),
+                    creditMemoItemPart.getAmount().intValue(),
+                    0);
+          } else {
+            creditMemoItemPartDto =
+                new CreditMemoItemPartDto(
+                    creditMemoItemPart.getId(),
+                    creditMemoItemIdToNameMap.get(fromName),
+                    0,
+                    creditMemoItemPart.getAmount().intValue());
+          }
         }
 
         /*
